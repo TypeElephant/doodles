@@ -10,9 +10,11 @@ import { StackNavigationProp } from "@react-navigation/stack"
 
 import { TabLabels, TabRoutes, TabRoute } from "../navigation/routes"
 import NeonCode from "../NeonCode"
+import UndulatingBars from "../UndulatingBars"
 
 import Icon from "react-native-vector-icons/Feather"
 import { Colors, Sizing, Outlines, Typography, Buttons } from "../styles"
+import { BACKGROUND_COLOR } from "../constants"
 
 type TabButtonConfig = {
   label: string
@@ -50,7 +52,7 @@ type Tab = {
 const TabNavigator: FC = () => {
   const documentsTab = {
     name: TabRoutes.Tab1,
-    component: NeonCode,
+    component: UndulatingBars,
   }
   const shareTab = {
     name: TabRoutes.Tab2,
@@ -166,7 +168,7 @@ const TabIcon: FC<TabIconProps> = ({ isFocused, iconName }) => {
     <View style={style.tabIconContainer}>
       <Icon
         name={iconName}
-        color={isFocused ? Colors.primary.brand : Colors.neutral.black}
+        color={isFocused ? Colors.neutral.white : Colors.neutral.s400}
         size={iconSize}
       />
     </View>
@@ -180,9 +182,9 @@ const style = StyleSheet.create({
     paddingTop: Sizing.x10,
     paddingBottom: StaticSafeAreaInsets.safeAreaInsetsBottom + Sizing.x10,
     paddingHorizontal: Sizing.x10,
-    backgroundColor: Colors.neutral.s100,
     borderTopWidth: Outlines.borderWidth.hairline,
-    borderColor: Colors.neutral.s200,
+    backgroundColor: BACKGROUND_COLOR,
+    borderColor: Colors.neutral.s500,
   },
   tabButton: {
     alignItems: "center",
