@@ -1,30 +1,29 @@
-import React, { FC, useEffect, useState } from "react"
+import React, { FC, useEffect, useState, ReactText } from "react"
 import {
   StyleSheet,
   ScrollView,
   SafeAreaView,
   ViewStyle,
   ColorValue,
+  View,
 } from "react-native"
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
-  useDerivedValue,
   withTiming,
-  withRepeat,
   interpolate,
+  useDerivedValue,
+  withRepeat,
 } from "react-native-reanimated"
-import { clamp } from "react-native-redash"
+import { mixColor, ReText } from "react-native-redash"
 
-import { Sizing, Typography, Colors } from "./styles"
+import { Sizing } from "./styles"
 
 type Rectangle = {
-  width: number
   color: ColorValue
 }
 
-const RECTANGLES_COUNT = 50
+const BACKGROUND_COLOR: ColorValue = "#282c34"
 
 const COLORS: ColorValue[] = [
   "#e06c75",
@@ -35,72 +34,72 @@ const COLORS: ColorValue[] = [
   "#56b6c2",
   "#abb2bf",
 ]
-
+const INTERVAL = 4000
+const RECTANGLES_COUNT = 10
 const OUTER_MARGIN = 40
-
+const MIN_WIDTH = 20
 const MAX_WIDTH = Sizing.screen.width - OUTER_MARGIN
 
-const randomWidth = () => {
-  return clamp(Math.floor(Math.random() * MAX_WIDTH), 20, 99999)
-}
-
 const randomColor = () => {
+  "worklet"
   return COLORS[Math.floor(Math.random() * COLORS.length)]
 }
 
-const randomRectangle = (): Rectangle => {
-  return {
-    width: randomWidth(),
-    color: randomColor(),
-  }
-}
-
-const randomRectangles = (): Rectangle[] => {
-  return new Array(RECTANGLES_COUNT).fill(0).map(() => randomRectangle())
-}
+const rectangles = new Array(RECTANGLES_COUNT).fill(0)
 
 const Placeholder: FC = () => {
-  const rectangles: Rectangle[] = randomRectangles()
-
   return (
     <SafeAreaView style={style.container}>
       <ScrollView
         style={style.container}
         contentContainerStyle={style.contentContainer}
       >
-        {rectangles.map((rectangle: Rectangle, index: number) => {
-          return <Rectangle rectangle={rectangle} key={index} />
+        {rectangles.map((_, index: number) => {
+          return <Rectangle key={index} />
         })}
       </ScrollView>
     </SafeAreaView>
   )
 }
 
-const INTERVAL = 1000
-
-interface RectangleProps {
-  rectangle: Rectangle
-}
-
-const Rectangle: FC<RectangleProps> = ({ rectangle }) => {
+const Rectangle: FC = () => {
   const progress = useSharedValue(0)
-
-  const [nextProgress, setNextProgress] = useState(0)
-
   useEffect(() => {
-    setInterval(() => {
-      setNextProgress(Math.random())
-      progress.value = withTiming(nextProgress, { duration: INTERVAL })
-    }, INTERVAL)
-  }, [nextProgress, progress])
+    progress.value = withRepeat(withTiming(1, { duration: INTERVAL }), -1, true)
+  }, [progress])
 
-  const rectangleStyle: ViewStyle = useAnimatedStyle(() => ({
-    width: clamp(progress.value * MAX_WIDTH, 20, 99999),
-    height: 10,
-    backgroundColor: rectangle.color,
-  }))
+  const currentColor = randomColor()
+  const prevRandomWidth = useSharedValue(Math.random() * MAX_WIDTH)
+  const nextRandomWidth = useSharedValue(Math.random() * MAX_WIDTH)
 
-  return <Animated.View style={rectangleStyle} />
+  const width = useDerivedValue(() => {
+    if (progress.value === 0) {
+      nextRandomWidth.value = Math.random() * MAX_WIDTH
+    }
+    if (progress.value === 1) {
+      prevRandomWidth.value = Math.random() * MAX_WIDTH
+    }
+
+    return interpolate(
+      progress.value,
+      [0, 1],
+      [prevRandomWidth.value, nextRandomWidth.value],
+    )
+  })
+
+  const rectangleStyle: ViewStyle = useAnimatedStyle(() => {
+    return {
+      width: width.value,
+      height: 10,
+      backgroundColor: currentColor as ColorValue,
+    }
+  })
+
+  return (
+    <View>
+      <Animated.View style={rectangleStyle} />
+    </View>
+  )
 }
 
 const style = StyleSheet.create({
@@ -112,7 +111,7 @@ const style = StyleSheet.create({
     padding: Sizing.x20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#282c34",
+    backgroundColor: BACKGROUND_COLOR,
   },
 })
 
