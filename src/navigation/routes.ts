@@ -9,7 +9,7 @@ export const NavigatorRoutes: Routes<NavigatorRoute> = {
 export type TabRoute = "Tab1" | "Tab2" | "Tab3"
 
 export const TabLabels: Record<TabRoute, string> = {
-  Tab1: "Tab 1",
+  Tab1: "Neon Code",
   Tab2: "Tab 2",
   Tab3: "Tab 3",
 }

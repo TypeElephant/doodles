@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 
 import { TabLabels, TabRoutes, TabRoute } from "../navigation/routes"
-import Placeholder from "../Placeholder"
+import NeonCode from "../NeonCode"
 
 import Icon from "react-native-vector-icons/Feather"
 import { Colors, Sizing, Outlines, Typography, Buttons } from "../styles"
@@ -50,15 +50,15 @@ type Tab = {
 const TabNavigator: FC = () => {
   const documentsTab = {
     name: TabRoutes.Tab1,
-    component: Placeholder,
+    component: NeonCode,
   }
   const shareTab = {
     name: TabRoutes.Tab2,
-    component: Placeholder,
+    component: NeonCode,
   }
   const settingsTab = {
     name: TabRoutes.Tab3,
-    component: Placeholder,
+    component: NeonCode,
   }
 
   const tabs = [documentsTab, shareTab, settingsTab]
@@ -71,7 +71,12 @@ const TabNavigator: FC = () => {
     >
       {tabs.map(({ name, component }) => {
         return (
-          <TabNavigator.Screen name={name} component={component} key={name} />
+          <TabNavigator.Screen
+            name={name}
+            component={component}
+            key={name}
+            options={{ unmountOnBlur: true }}
+          />
         )
       })}
     </TabNavigator.Navigator>
