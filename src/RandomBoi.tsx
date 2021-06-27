@@ -18,7 +18,7 @@ import Animated, {
 } from "react-native-reanimated"
 import { mixColor } from "react-native-redash"
 
-import { Sizing } from "./styles"
+import { Sizing, Outlines } from "./styles"
 import useStatusBar from "./navigation/useStatusBar"
 
 type Rectangle = {
@@ -36,16 +36,15 @@ const COLORS: ColorValue[] = [
   "#56b6c2",
   "#abb2bf",
 ]
-const INTERVAL = 250
-const RECTANGLE_HEIGHT = Sizing.x10
+const INTERVAL = 500
+const RECTANGLE_HEIGHT = Sizing.x30
 const RECTANGLE_MARGIN_BOTTOM = Sizing.x2
-const RECTANGLES_COUNT =
-  Math.floor(
-    Sizing.screen.height / (RECTANGLE_HEIGHT + RECTANGLE_MARGIN_BOTTOM),
-  ) - 20
-const OUTER_MARGIN = 40
+const RECTANGLES_COUNT = Math.floor(
+  Sizing.screen.width / (RECTANGLE_HEIGHT + RECTANGLE_MARGIN_BOTTOM),
+)
+const OUTER_MARGIN = 80
 const MIN_WIDTH = 20
-const MAX_WIDTH = Sizing.screen.width - OUTER_MARGIN
+const MAX_WIDTH = Sizing.screen.height - OUTER_MARGIN
 
 const randomColor = () => {
   "worklet"
@@ -54,8 +53,18 @@ const randomColor = () => {
 
 const rectangles = new Array(RECTANGLES_COUNT).fill(0)
 
-const NeonCode: FC = () => {
+const RandomBoi: FC = () => {
   useStatusBar("light", BACKGROUND_COLOR)
+
+  const progress = useSharedValue(0)
+
+  useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, { duration: INTERVAL, easing: Easing.ease }),
+      -1,
+      true,
+    )
+  }, [progress])
 
   return (
     <SafeAreaView style={style.container}>
@@ -64,7 +73,7 @@ const NeonCode: FC = () => {
         contentContainerStyle={style.contentContainer}
       >
         {rectangles.map((_, index: number) => {
-          return <Rectangle key={index} index={index} />
+          return <Rectangle key={index} index={index} progress={progress} />
         })}
       </ScrollView>
     </SafeAreaView>
@@ -73,34 +82,29 @@ const NeonCode: FC = () => {
 
 interface RectangleProps {
   index: number
+  progress: Animated.SharedValue<number>
 }
 
-const Rectangle: FC<RectangleProps> = ({ index }) => {
-  const progress = useSharedValue(0)
-  useEffect(() => {
-    progress.value = withRepeat(
-      withTiming(1, { duration: INTERVAL, easing: Easing.linear }),
-      -1,
-      true,
-    )
-  }, [progress])
-
+const Rectangle: FC<RectangleProps> = ({ index, progress }) => {
   const leftRandomWidth = useSharedValue(0)
   const rightRandomWidth = useSharedValue(Math.random() * MAX_WIDTH)
 
   const width = useDerivedValue(() => {
     if (progress.value === 0) {
-      const coin = Math.random() > 0
+      const coin = Math.random() > 0.2
       if (coin) {
-        const nextValue = (leftRandomWidth.value + 1 * index) % MAX_WIDTH
-        rightRandomWidth.value = nextValue
+        const nextValue =
+          (leftRandomWidth.value + Math.random() * 100) % MAX_WIDTH
+        rightRandomWidth.value = Math.floor(nextValue)
       } else {
-        rightRandomWidth.value = Math.random() * MAX_WIDTH
+        const nextValue =
+          (leftRandomWidth.value - Math.random() * 20) % MAX_WIDTH
+        rightRandomWidth.value = Math.floor(nextValue)
       }
     }
     if (progress.value === 1) {
       // leftRandomWidth.value = Math.random() * MAX_WIDTH
-      const nextValue = (rightRandomWidth.value + 1 * index) % MAX_WIDTH
+      const nextValue = (rightRandomWidth.value + 1) % MAX_WIDTH
       leftRandomWidth.value = nextValue
     }
 
@@ -124,7 +128,7 @@ const Rectangle: FC<RectangleProps> = ({ index }) => {
       }
     }
 
-    const mixValue = Math.sin((progress.value * 2 * Math.PI) / 10)
+    const mixValue = Math.sin((progress.value * 2 * Math.PI) / 20)
 
     return mixColor(
       mixValue,
@@ -135,7 +139,7 @@ const Rectangle: FC<RectangleProps> = ({ index }) => {
 
   const animatedRectangleStyle: ViewStyle = useAnimatedStyle(() => {
     return {
-      width: width.value,
+      height: width.value,
       backgroundColor: color.value as ColorValue,
     }
   })
@@ -154,15 +158,17 @@ const style = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    padding: Sizing.x20,
+    flexDirection: "row",
     alignItems: "flex-start",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     backgroundColor: BACKGROUND_COLOR,
   },
   rectangle: {
-    height: RECTANGLE_HEIGHT,
-    marginBottom: RECTANGLE_MARGIN_BOTTOM,
+    width: RECTANGLE_HEIGHT,
+    marginRight: RECTANGLE_MARGIN_BOTTOM,
+    borderBottomLeftRadius: Outlines.borderRadius.max,
+    borderBottomRightRadius: Outlines.borderRadius.max,
   },
 })
 
-export default NeonCode
+export default RandomBoi

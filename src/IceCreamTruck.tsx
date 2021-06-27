@@ -36,14 +36,14 @@ const COLORS: ColorValue[] = [
   "#56b6c2",
   "#abb2bf",
 ]
-const INTERVAL = 250
+const INTERVAL = 2000
 const RECTANGLE_HEIGHT = Sizing.x10
 const RECTANGLE_MARGIN_BOTTOM = Sizing.x2
 const RECTANGLES_COUNT =
   Math.floor(
     Sizing.screen.height / (RECTANGLE_HEIGHT + RECTANGLE_MARGIN_BOTTOM),
   ) - 20
-const OUTER_MARGIN = 40
+const OUTER_MARGIN = 80
 const MIN_WIDTH = 20
 const MAX_WIDTH = Sizing.screen.width - OUTER_MARGIN
 
@@ -54,8 +54,18 @@ const randomColor = () => {
 
 const rectangles = new Array(RECTANGLES_COUNT).fill(0)
 
-const NeonCode: FC = () => {
+const IceCreamTruck: FC = () => {
   useStatusBar("light", BACKGROUND_COLOR)
+
+  const progress = useSharedValue(0)
+
+  useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, { duration: INTERVAL, easing: Easing.elastic(10) }),
+      -1,
+      true,
+    )
+  }, [progress])
 
   return (
     <SafeAreaView style={style.container}>
@@ -64,7 +74,7 @@ const NeonCode: FC = () => {
         contentContainerStyle={style.contentContainer}
       >
         {rectangles.map((_, index: number) => {
-          return <Rectangle key={index} index={index} />
+          return <Rectangle key={index} index={index} progress={progress} />
         })}
       </ScrollView>
     </SafeAreaView>
@@ -73,18 +83,10 @@ const NeonCode: FC = () => {
 
 interface RectangleProps {
   index: number
+  progress: Animated.SharedValue<number>
 }
 
-const Rectangle: FC<RectangleProps> = ({ index }) => {
-  const progress = useSharedValue(0)
-  useEffect(() => {
-    progress.value = withRepeat(
-      withTiming(1, { duration: INTERVAL, easing: Easing.linear }),
-      -1,
-      true,
-    )
-  }, [progress])
-
+const Rectangle: FC<RectangleProps> = ({ index, progress }) => {
   const leftRandomWidth = useSharedValue(0)
   const rightRandomWidth = useSharedValue(Math.random() * MAX_WIDTH)
 
@@ -92,10 +94,10 @@ const Rectangle: FC<RectangleProps> = ({ index }) => {
     if (progress.value === 0) {
       const coin = Math.random() > 0
       if (coin) {
-        const nextValue = (leftRandomWidth.value + 1 * index) % MAX_WIDTH
-        rightRandomWidth.value = nextValue
+        const nextValue = (leftRandomWidth.value + 3 * index) % MAX_WIDTH
+        rightRandomWidth.value = Math.floor(nextValue)
       } else {
-        rightRandomWidth.value = Math.random() * MAX_WIDTH
+        rightRandomWidth.value = Math.floor(Math.random() * MAX_WIDTH)
       }
     }
     if (progress.value === 1) {
@@ -165,4 +167,4 @@ const style = StyleSheet.create({
   },
 })
 
-export default NeonCode
+export default IceCreamTruck

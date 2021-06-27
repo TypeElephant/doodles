@@ -11,10 +11,12 @@ import { StackNavigationProp } from "@react-navigation/stack"
 import { TabLabels, TabRoutes, TabRoute } from "../navigation/routes"
 import NeonCode from "../NeonCode"
 import UndulatingBars from "../UndulatingBars"
+import { BACKGROUND_COLOR } from "../constants"
+import IceCreamTruck from "../IceCreamTruck"
 
 import Icon from "react-native-vector-icons/Feather"
 import { Colors, Sizing, Outlines, Typography, Buttons } from "../styles"
-import { BACKGROUND_COLOR } from "../constants"
+import RandomBoi from "../RandomBoi"
 
 type TabButtonConfig = {
   label: string
@@ -41,6 +43,12 @@ const determineConfig = (tab: Tab): TabButtonConfig => {
         iconName: "triangle",
       }
     }
+    case "Tab4": {
+      return {
+        label: TabLabels.Tab4,
+        iconName: "circle",
+      }
+    }
   }
 }
 
@@ -52,7 +60,7 @@ type Tab = {
 const TabNavigator: FC = () => {
   const documentsTab = {
     name: TabRoutes.Tab1,
-    component: UndulatingBars,
+    component: IceCreamTruck,
   }
   const shareTab = {
     name: TabRoutes.Tab2,
@@ -60,10 +68,14 @@ const TabNavigator: FC = () => {
   }
   const settingsTab = {
     name: TabRoutes.Tab3,
-    component: NeonCode,
+    component: UndulatingBars,
+  }
+  const anotherTab = {
+    name: TabRoutes.Tab4,
+    component: RandomBoi,
   }
 
-  const tabs = [documentsTab, shareTab, settingsTab]
+  const tabs = [anotherTab, documentsTab, shareTab, settingsTab]
 
   const TabNavigator = createBottomTabNavigator()
 
