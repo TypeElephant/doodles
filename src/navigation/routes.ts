@@ -6,13 +6,14 @@ export const NavigatorRoutes: Routes<NavigatorRoute> = {
   TabNavigator: "TabNavigator",
 }
 
-export type TabRoute = "Tab1" | "Tab2" | "Tab3" | "Tab4"
+export type TabRoute = "Tab1" | "Tab2" | "Tab3" | "Tab4" | "Tab5"
 
 export const TabLabels: Record<TabRoute, string> = {
   Tab1: "",
   Tab2: "",
   Tab3: "",
   Tab4: "",
+  Tab5: "",
 }
 
 export const TabRoutes: Routes<TabRoute> = {
@@ -20,6 +21,7 @@ export const TabRoutes: Routes<TabRoute> = {
   Tab2: "Tab2",
   Tab3: "Tab3",
   Tab4: "Tab4",
+  Tab5: "Tab5",
 }
 
 type UnauthenticatedRoute = "SignIn" | "SignUp"

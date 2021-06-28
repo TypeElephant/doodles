@@ -17,6 +17,7 @@ import IceCreamTruck from "../IceCreamTruck"
 import Icon from "react-native-vector-icons/Feather"
 import { Colors, Sizing, Outlines, Typography, Buttons } from "../styles"
 import RandomBoi from "../RandomBoi"
+import NightBaby from "../NightBaby"
 
 type TabButtonConfig = {
   label: string
@@ -49,6 +50,12 @@ const determineConfig = (tab: Tab): TabButtonConfig => {
         iconName: "circle",
       }
     }
+    case "Tab5": {
+      return {
+        label: TabLabels.Tab5,
+        iconName: "star",
+      }
+    }
   }
 }
 
@@ -74,8 +81,12 @@ const TabNavigator: FC = () => {
     name: TabRoutes.Tab4,
     component: RandomBoi,
   }
+  const moreTab = {
+    name: TabRoutes.Tab5,
+    component: NightBaby,
+  }
 
-  const tabs = [anotherTab, documentsTab, shareTab, settingsTab]
+  const tabs = [moreTab, anotherTab, documentsTab, shareTab, settingsTab]
 
   const TabNavigator = createBottomTabNavigator()
 

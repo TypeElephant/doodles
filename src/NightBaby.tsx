@@ -37,14 +37,14 @@ const COLORS: ColorValue[] = [
   "#56b6c2",
   "#abb2bf",
 ]
-const INTERVAL = 2000
-const RECTANGLE_HEIGHT = Sizing.x7
+const INTERVAL = 1000
+const RECTANGLE_HEIGHT = Sizing.x5
 const RECTANGLE_MARGIN_BOTTOM = Sizing.x5
 const RECTANGLES_COUNT =
   Math.floor(
     Sizing.screen.height / (RECTANGLE_HEIGHT + RECTANGLE_MARGIN_BOTTOM),
   ) - 20
-const OUTER_MARGIN = 80
+const OUTER_MARGIN = 40
 const MIN_WIDTH = 20
 const MAX_WIDTH = Sizing.screen.width - OUTER_MARGIN
 
@@ -55,7 +55,7 @@ const randomColor = () => {
 
 const rectangles = new Array(RECTANGLES_COUNT).fill(0)
 
-const IceCreamTruck: FC = () => {
+const NightBaby: FC = () => {
   useStatusBar("light", BACKGROUND_COLOR)
 
   return (
@@ -83,7 +83,7 @@ const Rectangle: FC<RectangleProps> = ({ index }) => {
 
   useEffect(() => {
     progress.value = withDelay(
-      ((index * INTERVAL) / RECTANGLES_COUNT) * 10,
+      ((index * INTERVAL) / RECTANGLES_COUNT) * 2,
       withRepeat(
         withTiming(1, { duration: INTERVAL, easing: Easing.linear }),
         -1,
@@ -96,7 +96,7 @@ const Rectangle: FC<RectangleProps> = ({ index }) => {
     if (progress.value === 0) {
       // const coin = Math.random() > 0
       // if (coin) {
-      const nextValue = (leftRandomWidth.value + 50) % MAX_WIDTH
+      const nextValue = (leftRandomWidth.value + 5) % MAX_WIDTH
       rightRandomWidth.value = Math.floor(nextValue)
       // } else {
       // rightRandomWidth.value = Math.floor(Math.random() * MAX_WIDTH)
@@ -104,11 +104,15 @@ const Rectangle: FC<RectangleProps> = ({ index }) => {
     }
     if (progress.value === 1) {
       // leftRandomWidth.value = Math.random() * MAX_WIDTH
-      const nextValue = (rightRandomWidth.value + 50) % MAX_WIDTH
+      const nextValue = (rightRandomWidth.value + 5) % MAX_WIDTH
       leftRandomWidth.value = Math.floor(nextValue)
     }
 
-    return interpolate(progress.value, [0, 1], [0, rightRandomWidth.value])
+    return interpolate(
+      progress.value,
+      [0, 1],
+      [20, MIN_WIDTH + rightRandomWidth.value],
+    )
   })
 
   const leftRandomColor = useSharedValue(randomColor())
@@ -162,7 +166,8 @@ const style = StyleSheet.create({
   rectangle: {
     height: RECTANGLE_HEIGHT,
     marginBottom: RECTANGLE_MARGIN_BOTTOM,
+    borderRadius: Outlines.borderRadius.max,
   },
 })
 
-export default IceCreamTruck
+export default NightBaby
